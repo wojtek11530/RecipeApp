@@ -1,5 +1,7 @@
 package com.example.RecipeAssignment.services;
 
+import com.example.RecipeAssignment.converters.RecipeCommandToRecipe;
+import com.example.RecipeAssignment.converters.RecipeToRecipeCommand;
 import com.example.RecipeAssignment.domain.Recipe;
 import com.example.RecipeAssignment.repositories.RecipeRepository;
 import org.junit.Before;
@@ -15,21 +17,24 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-public class RecipesServiceImplTest {
+public class RecipeServiceImplTest {
 
-
-    RecipesServiceImpl recipeService;
+    RecipeServiceImpl recipeService;
 
     @Mock
     RecipeRepository recipeRepository;
 
+    @Mock
+    RecipeToRecipeCommand recipeToRecipeCommand;
+
+    @Mock
+    RecipeCommandToRecipe recipeCommandToRecipe;
 
     @Before
     public void setUp() throws Exception {
-
         MockitoAnnotations.initMocks(this);
 
-        recipeService = new RecipesServiceImpl(recipeRepository);
+        recipeService = new RecipeServiceImpl(recipeRepository, recipeCommandToRecipe, recipeToRecipeCommand);
     }
 
     @Test
@@ -59,5 +64,20 @@ public class RecipesServiceImplTest {
 
         assertEquals(recipes.size(), 1);
         verify(recipeRepository, times(1)).findAll();
+    }
+
+    @Test
+    public void testDeleteById() throws Exception {
+
+        //given
+        Long idToDelete = Long.valueOf(2L);
+
+        //when
+        recipeService.deleteById(idToDelete);
+
+        //no 'when', since method has void return type
+
+        //then
+        verify(recipeRepository, times(1)).deleteById(anyLong());
     }
 }
